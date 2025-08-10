@@ -8,6 +8,20 @@ const app = express();
 
 app.use(bodyParser.json());
 
+// === API Key Setup ===
+const VALID_API_KEY = "12345-abcde-67890"; // <-- Sample API Key
+
+function apiKeyAuth(req, res, next) {
+  const apiKey = req.headers["x-api-key"];
+  if (!apiKey || apiKey !== VALID_API_KEY) {
+    return res.status(401).json({ message: "Unauthorized: Invalid API Key" });
+  }
+  next();
+}
+
+// Apply API key middleware to all routes
+app.use(apiKeyAuth);
+
 const ajv = new Ajv();
 
 const TASKS_JSON = path.join(__dirname, "tasks.json");
@@ -37,7 +51,6 @@ function writeFileSyncWrapper(file, data) {
 // GET retrieve all tasks
 app.get("/tasks", (req, res) => {
   const { completed, sort } = req.query;
-  console.log(sort);
   let isCompleted =
     completed === undefined || completed.toLowerCase() === "false"
       ? false
@@ -136,3 +149,4 @@ app.use((err, req, res, next) => {
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
+
