@@ -1,1 +1,4 @@
+mkdir src
+mv /path/to/your/updated/app.js src/app.js
+mv /path/to/your/updated/tasks.json src/tasks.json
 
